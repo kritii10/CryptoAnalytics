@@ -5,7 +5,6 @@ import {
   LineChart,
   LogOut,
   Search,
-  Settings,
   Wallet
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -18,8 +17,7 @@ function Navbar() {
   const items = [
     { to: "/", label: "Dashboard", icon: LayoutDashboard },
     { to: "/portfolio", label: "Portfolio", icon: Wallet },
-    { to: "/forecast", label: "Forecast", icon: LineChart },
-    { to: "/settings", label: "Settings", icon: Settings }
+    { to: "/forecast", label: "Forecast", icon: LineChart }
   ];
 
   function logout() {

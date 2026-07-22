@@ -7,6 +7,62 @@ const { requireAuth } = require("./middleware");
 
 const router = express.Router();
 
+async function loadHistoricalPrices(coinId) {
+  const result = await pool.query(
+    `SELECT price_date, price_usd
+     FROM price_history
+     WHERE coin_id = $1
+     ORDER BY price_date`,
+    [coinId]
+  );
+
+  return result.rows;
+}
+
+function buildForecastFromRows(rows) {
+  if (rows.length < 2) {
+    return { historical: [], predictions: [] };
+  }
+
+  const firstDate = new Date(rows[0].price_date);
+  const historical = rows.map((row) => ({
+    date: row.price_date,
+    price: Number(Number(row.price_usd).toFixed(2))
+  }));
+
+  const points = rows.map((row) => {
+    const dayNumber = Math.round((new Date(row.price_date) - firstDate) / (1000 * 60 * 60 * 24));
+    return { x: dayNumber, y: Number(row.price_usd) };
+  });
+
+  const count = points.length;
+  const sumX = points.reduce((total, point) => total + point.x, 0);
+  const sumY = points.reduce((total, point) => total + point.y, 0);
+  const sumXY = points.reduce((total, point) => total + point.x * point.y, 0);
+  const sumXX = points.reduce((total, point) => total + point.x * point.x, 0);
+  const denominator = count * sumXX - sumX * sumX;
+  const slope = denominator === 0 ? 0 : (count * sumXY - sumX * sumY) / denominator;
+  const intercept = (sumY - slope * sumX) / count;
+
+  const lastDate = new Date(rows[rows.length - 1].price_date);
+  const years = [1, 2, 3, 5];
+  const predictions = years.map((year) => {
+    const futureDate = new Date(lastDate);
+    futureDate.setDate(futureDate.getDate() + 365 * year);
+
+    const futureDayNumber = Math.round((futureDate - firstDate) / (1000 * 60 * 60 * 24));
+    const predictedPrice = intercept + slope * futureDayNumber;
+
+    return {
+      year,
+      date: futureDate.toISOString().slice(0, 10),
+      predicted_price: Number(predictedPrice.toFixed(2))
+    };
+  });
+
+  return { historical, predictions };
+}
+
 router.get("/summary", requireAuth, async (req, res) => {
   try {
     const result = await pool.query(
@@ -169,7 +225,8 @@ router.post("/refresh-prices", requireAuth, async (req, res) => {
   }
 });
 
-router.get("/forecast/:coinId", requireAuth, (req, res) => {
+router.get("/forecast/:coinId", requireAuth, async (req, res) => {
+  const fallbackRows = await loadHistoricalPrices(req.params.coinId);
   const scriptPath = path.join(__dirname, "..", "forecast", "predict.py");
   const python = spawn("python3", [scriptPath, req.params.coinId]);
   let output = "";
@@ -185,14 +242,18 @@ router.get("/forecast/:coinId", requireAuth, (req, res) => {
 
   python.on("close", (code) => {
     if (code !== 0) {
-      return res.status(500).json({ message: "Forecast failed", details: errors.trim() });
+      return res.json(buildForecastFromRows(fallbackRows));
     }
 
     try {
       res.json(JSON.parse(output));
     } catch (error) {
-      res.status(500).json({ message: "Forecast returned invalid data" });
+      res.json(buildForecastFromRows(fallbackRows));
     }
+  });
+
+  python.on("error", async () => {
+    res.json(buildForecastFromRows(fallbackRows));
   });
 });
 
