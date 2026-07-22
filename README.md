@@ -1,10 +1,5 @@
 # Crypto Analytics
 
-![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB?logo=react&logoColor=white)
-![Express](https://img.shields.io/badge/Backend-Express-111827?logo=express&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-336791?logo=postgresql&logoColor=white)
-![Python](https://img.shields.io/badge/Forecasting-Python%20%2B%20scikit--learn-3776AB?logo=python&logoColor=white)
-![Tests](https://img.shields.io/badge/Tests-Vitest%20%2B%20Supertest-6E9F18)
 
 Crypto Analytics is a full-stack cryptocurrency portfolio tracking and forecasting project.
 
