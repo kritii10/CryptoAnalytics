@@ -13,7 +13,21 @@ The project keeps the architecture intentionally simple:
 
 ## Preview
 
+### Login
+
 ![Crypto Analytics Login Screen](screenshots/login-page.png)
+
+### Dashboard
+
+![Crypto Analytics Dashboard](screenshots/dashboard-page.png)
+
+### Portfolio
+
+![Crypto Analytics Portfolio](screenshots/portfolio-page.png)
+
+### Forecast
+
+![Crypto Analytics Forecast](screenshots/forecast-page.png)
 
 ## Features
 
