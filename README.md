@@ -10,6 +10,7 @@ The project keeps the architecture intentionally simple:
 - PostgreSQL for data storage
 - JWT authentication
 - Python Linear Regression forecasting using `scikit-learn`
+- JavaScript forecast fallback in the backend when Python is unavailable
 
 ## Preview
 
@@ -34,8 +35,8 @@ The project keeps the architecture intentionally simple:
 - User registration and login
 - JWT-based protected APIs
 - Create, view, and delete transactions
+- Dashboard with portfolio value, profit/loss, assets owned, allocation, and watchlist
 - Portfolio tracking
-- Portfolio analytics
 - Watchlist management
 - Coin price refresh using CoinGecko
 - Forecasting with historical data from PostgreSQL
@@ -159,11 +160,12 @@ flowchart TD
 ### 4. Forecasting
 
 - The frontend requests forecast data for a selected coin
-- The Express backend runs `forecast/predict.py`
+- The Express backend first tries to run `forecast/predict.py`
 - The Python script reads `price_history` from PostgreSQL
 - It converts dates into numbers
 - It trains a Linear Regression model
-- It returns historical data and predicted prices as JSON
+- If Python execution is unavailable on the host, the backend falls back to a simple regression calculation in JavaScript
+- The API still returns the same historical data and prediction structure to the frontend
 
 
 ## Local Setup
@@ -264,4 +266,3 @@ The sample data includes a demo account:
 
 - `npm run test`
   - Runs automated backend tests
-

@@ -118,44 +118,6 @@ router.get("/allocation", requireAuth, async (req, res) => {
   }
 });
 
-router.get("/top-performing", requireAuth, async (req, res) => {
-  try {
-    const result = await pool.query(
-      `SELECT c.symbol, c.name,
-              AVG((c.current_price_usd - p.average_buy_price) / NULLIF(p.average_buy_price, 0) * 100) AS gain_percent
-       FROM portfolio p
-       JOIN coins c ON c.id = p.coin_id
-       WHERE p.user_id = $1
-       GROUP BY c.symbol, c.name
-       ORDER BY gain_percent DESC
-       LIMIT 1`,
-      [req.user.id]
-    );
-    res.json(result.rows[0] || null);
-  } catch (error) {
-    res.status(500).json({ message: "Could not load top performer" });
-  }
-});
-
-router.get("/monthly-investment", requireAuth, async (req, res) => {
-  try {
-    const result = await pool.query(
-      `SELECT TO_CHAR(transaction_date, 'YYYY-MM') AS month,
-              SUM(total_usd) AS amount,
-              COUNT(*) AS transaction_count
-       FROM transactions
-       WHERE user_id = $1 AND transaction_type = 'buy'
-       GROUP BY TO_CHAR(transaction_date, 'YYYY-MM')
-       ORDER BY month`,
-      [req.user.id]
-    );
-
-    res.json(result.rows);
-  } catch (error) {
-    res.status(500).json({ message: "Could not load monthly investment" });
-  }
-});
-
 router.get("/watchlist", requireAuth, async (req, res) => {
   try {
     const result = await pool.query(

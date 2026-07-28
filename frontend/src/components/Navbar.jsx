@@ -13,7 +13,6 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const lastUpdated = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   const items = [
     { to: "/", label: "Dashboard", icon: LayoutDashboard },
     { to: "/portfolio", label: "Portfolio", icon: Wallet },
@@ -36,7 +35,7 @@ function Navbar() {
             </div>
             <div>
               <p className="text-lg font-semibold text-[#F9FAFB]">CryptoAnalytics</p>
-              <p className="text-xs text-[#9CA3AF]">Analyst Workspace</p>
+              <p className="text-xs text-[#9CA3AF]">Crypto Portfolio</p>
             </div>
           </div>
         </div>
@@ -86,7 +85,7 @@ function Navbar() {
         <div className="flex flex-col gap-4 px-4 py-4 md:px-8">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-[#9CA3AF]">Reporting Workspace</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-[#9CA3AF]">Dashboard</p>
               <h1 className="text-lg font-semibold text-[#F9FAFB]">
                 {items.find((item) => item.to === location.pathname)?.label || "Dashboard"}
               </h1>
@@ -104,12 +103,6 @@ function Navbar() {
                 {(user.name || "D").slice(0, 1)}
               </div>
             </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3 text-xs">
-            <span className="rounded-full bg-[#111827] px-3 py-1 font-medium text-[#9CA3AF]">Market status: Open</span>
-            <span className="rounded-full bg-[#111827] px-3 py-1 font-medium text-[#9CA3AF]">Last updated: {lastUpdated}</span>
-            <span className="rounded-full bg-[#111827] px-3 py-1 font-medium text-[#9CA3AF]">Source: CoinGecko + PostgreSQL</span>
           </div>
 
           <div className="flex gap-2 overflow-x-auto md:hidden">
