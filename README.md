@@ -10,7 +10,6 @@ The project keeps the architecture intentionally simple:
 - PostgreSQL for data storage
 - JWT authentication
 - Python Linear Regression forecasting using `scikit-learn`
-- JavaScript forecast fallback in the backend when Python is unavailable
 
 ## Preview
 
