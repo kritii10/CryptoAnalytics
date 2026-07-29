@@ -48,7 +48,7 @@ The project keeps the architecture intentionally simple:
 
 - React
 - Vite
-- Tailwind CSS
+- CSS
 - Axios
 - Recharts
 - React Router
