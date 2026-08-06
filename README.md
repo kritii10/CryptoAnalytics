@@ -1,6 +1,6 @@
 # Crypto Analytics
 
-Crypto Analytics is a full-stack cryptocurrency portfolio tracking and forecasting project.
+Crypto Analytics is a cryptocurrency portfolio tracking and forecasting project.
 
 The project keeps the architecture intentionally simple:
 
