@@ -1,7 +1,6 @@
 # Crypto Analytics
 
-
-Crypto Analytics is a full-stack cryptocurrency portfolio tracking and forecasting project.
+Crypto Analytics is a cryptocurrency portfolio tracking and forecasting project.
 
 The project keeps the architecture intentionally simple:
 
@@ -10,7 +9,6 @@ The project keeps the architecture intentionally simple:
 - PostgreSQL for data storage
 - JWT authentication
 - Python Linear Regression forecasting using `scikit-learn`
-- JavaScript forecast fallback in the backend when Python is unavailable
 
 ## Preview
 
@@ -48,7 +46,7 @@ The project keeps the architecture intentionally simple:
 
 - React
 - Vite
-- Tailwind CSS
+- CSS
 - Axios
 - Recharts
 - React Router
@@ -71,69 +69,6 @@ The project keeps the architecture intentionally simple:
 - Python
 - scikit-learn
 - Linear Regression
-
-## System Architecture
-
-```mermaid
-flowchart TD
-    U["User Browser"]
-
-    subgraph FE["Frontend Layer"]
-        V["Vite + React App"]
-        R["Pages: Login / Dashboard / Portfolio / Forecast"]
-        C1["Components: Navbar / Chart / Table"]
-    end
-
-    subgraph BE["Backend Layer"]
-        S["Express Server"]
-        A["Auth Routes"]
-        T["Transaction Routes"]
-        AN["Analytics Routes"]
-        M["JWT Middleware"]
-    end
-
-    subgraph DATA["Data Layer"]
-        P["PostgreSQL"]
-        U1["users"]
-        C2["coins"]
-        TR["transactions"]
-        PF["portfolio"]
-        W["watchlist"]
-        PH["price_history"]
-    end
-
-    subgraph EXT["External Services"]
-        G["CoinGecko API"]
-        PY["predict.py\nLinear Regression"]
-    end
-
-    U --> V
-    V --> R
-    R --> C1
-    V -->|Axios /api requests| S
-
-    S --> A
-    S --> T
-    S --> AN
-    T --> M
-    AN --> M
-
-    A -->|pg queries| P
-    T -->|pg queries| P
-    AN -->|pg queries| P
-
-    P --> U1
-    P --> C2
-    P --> TR
-    P --> PF
-    P --> W
-    P --> PH
-
-    AN -->|refresh prices| G
-    AN -->|spawn python3| PY
-    PY -->|read historical prices| PH
-    PY -->|forecast JSON| AN
-```
 
 ## How the App Works
 
@@ -164,9 +99,6 @@ flowchart TD
 - The Python script reads `price_history` from PostgreSQL
 - It converts dates into numbers
 - It trains a Linear Regression model
-- If Python execution is unavailable on the host, the backend falls back to a simple regression calculation in JavaScript
-- The API still returns the same historical data and prediction structure to the frontend
-
 
 ## Local Setup
 
