@@ -1,0 +1,17 @@
+# Developed and tested with: pandas 3.0, numpy 2.5, scipy 1.18, statsmodels 0.15,
+# arch 9.0, scikit-learn 1.9, streamlit 1.67, plotly 7.1, Python 3.12.
+# Lower bounds below are conservative minimums; streamlit>=1.50 is needed for width="stretch".
+pandas>=2.2
+numpy>=1.26
+scipy>=1.11
+statsmodels>=0.14
+arch>=7.0
+scikit-learn>=1.4
+psycopg2-binary>=2.9
+requests>=2.31
+matplotlib>=3.8
+seaborn>=0.13
+plotly>=5.18
+streamlit>=1.50
+jupyter>=1.0
+pytest>=8.0

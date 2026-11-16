@@ -1,0 +1,26 @@
+# One-command PostgreSQL with every schema/view script pre-loaded.
+#   docker compose up -d
+# Then use these settings for the backend, ingest script and notebooks:
+#   export DB_HOST=localhost DB_PORT=5432 DB_NAME=crypto_analytics DB_USER=crypto DB_PASSWORD=crypto
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: crypto_analytics
+      POSTGRES_USER: crypto
+      POSTGRES_PASSWORD: crypto
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # scripts run once, in filename order, on first start of an empty volume
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./database/analytics_schema.sql:/docker-entrypoint-initdb.d/02_analytics_schema.sql:ro
+      - ./database/sample_data.sql:/docker-entrypoint-initdb.d/03_sample_data.sql:ro
+      - ./database/analytics_views.sql:/docker-entrypoint-initdb.d/04_analytics_views.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crypto -d crypto_analytics"]
+      interval: 5s
+      retries: 10
+volumes:
+  pgdata:

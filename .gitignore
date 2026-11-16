@@ -4,3 +4,12 @@ dist/
 .env
 .DS_Store
 work/
+
+# analytics module
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+analytics/data/*.csv
+analytics/reports/*.csv
+analytics/reports/data_quality.json

@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Bell,
+  BarChart3,
   LayoutDashboard,
   LineChart,
   LogOut,
@@ -16,7 +17,8 @@ function Navbar() {
   const items = [
     { to: "/", label: "Dashboard", icon: LayoutDashboard },
     { to: "/portfolio", label: "Portfolio", icon: Wallet },
-    { to: "/forecast", label: "Forecast", icon: LineChart }
+    { to: "/forecast", label: "Forecast", icon: LineChart },
+    { to: "/analytics", label: "Analytics", icon: BarChart3 }
   ];
 
   function logout() {
@@ -85,7 +87,7 @@ function Navbar() {
         <div className="flex flex-col gap-4 px-4 py-4 md:px-8">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-[#9CA3AF]">Dashboard</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-[#9CA3AF]">Crypto Analytics</p>
               <h1 className="text-lg font-semibold text-[#F9FAFB]">
                 {items.find((item) => item.to === location.pathname)?.label || "Dashboard"}
               </h1>

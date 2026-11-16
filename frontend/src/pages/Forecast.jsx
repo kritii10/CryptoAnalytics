@@ -57,7 +57,11 @@ function Forecast() {
   }, [coinId]);
 
   const chartData = [
-    ...historical.map((item) => ({ date: item.date, actual: item.price, forecast: null })),
+    ...historical.map((item, index) => ({
+      date: item.date,
+      actual: item.price,
+      forecast: index === historical.length - 1 ? item.price : null
+    })),
     ...predictions.map((item) => ({ date: item.date, actual: null, forecast: item.predicted_price }))
   ];
 

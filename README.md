@@ -266,3 +266,55 @@ The sample data includes a demo account:
 
 - `npm run test`
   - Runs automated backend tests
+
+## Analytics Module (data analysis layer)
+
+The `analytics/` folder adds a data-analytics layer on top of the app. It is additive: nothing in `backend/` or `frontend/` is required to change.
+
+### What it adds
+
+| Area | Where | What it does |
+|---|---|---|
+| Data pipeline | `analytics/etl/` | Loads 12 coins of daily OHLCV (Binance public API) and the Fear & Greed Index into PostgreSQL; validates every coin and writes a data-quality report |
+| SQL analytics | `database/analytics_views.sql` | Window-function views: returns, rolling volatility, drawdown, momentum ranking, weekday seasonality, portfolio value rebuilt from the ledger |
+| Risk metrics | `analytics/metrics.py` | Sharpe, Sortino, Calmar, VaR/CVaR, beta, correlation, efficient frontier, risk contributions |
+| Portfolio accounting | `analytics/portfolio.py` | XIRR and FIFO realised P&L |
+| Forecast evaluation | `analytics/forecasting.py` | Walk-forward validation of 6 price models vs a naive baseline, GARCH volatility forecasts, prediction-interval coverage |
+| Notebooks | `analytics/notebooks/` | `01_eda`, `02_risk_and_portfolio`, `03_forecasting` |
+| Dashboard | `analytics/dashboard.py` | Streamlit app: market overview, risk and correlation, forecast evaluation, personal portfolio |
+| Tests / CI | `analytics/tests/`, `.github/workflows/` | 37 pytest tests (including SQL-vs-pandas cross-checks) run in GitHub Actions |
+| Docs | `docs/` | Data dictionary, methodology and limitations, findings write-up |
+
+### Quick start
+
+```bash
+# 1. Database (Docker option; or follow Local Setup above, then run the two analytics SQL files)
+docker compose up -d
+export DB_HOST=localhost DB_PORT=5432 DB_NAME=crypto_analytics DB_USER=crypto DB_PASSWORD=crypto
+
+# 2. Python dependencies
+pip install -r analytics/requirements.txt
+
+# 3. Load real data (re-runnable, ~1-2 minutes)
+python -m analytics.etl.ingest
+
+# 4. Explore
+jupyter lab analytics/notebooks
+streamlit run analytics/dashboard.py
+python -m analytics.forecasting --symbol BTC --horizon 7
+
+# 5. Test
+python -m pytest analytics/tests
+```
+
+Without Docker: apply the extra SQL after the base setup:
+
+```bash
+psql -U your_postgres_user -d crypto_analytics -f database/analytics_schema.sql
+psql -U your_postgres_user -d crypto_analytics -f database/analytics_views.sql
+```
+
+### Design notes
+* `python -m analytics.etl.ingest --source synthetic` generates fake data for demos and CI only. Rows are tagged `source = 'synthetic'`, and the notebooks and dashboard show a warning when it is present.
+* The existing Forecast page still uses a linear trend to extrapolate 1-5 years. `analytics/notebooks/03_forecasting.ipynb` measures how that method performs against honest baselines.
+* See [`docs/methodology.md`](docs/methodology.md) for definitions and limitations and [`docs/findings.md`](docs/findings.md) for the results write-up.

@@ -4,6 +4,7 @@ import Login from "./pages/Login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Portfolio from "./pages/Portfolio.jsx";
 import Forecast from "./pages/Forecast.jsx";
+import Analytics from "./pages/Analytics.jsx";
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
@@ -36,6 +37,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Forecast />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute>
+              <Analytics />
             </ProtectedRoute>
           }
         />

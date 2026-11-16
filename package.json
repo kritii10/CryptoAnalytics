@@ -7,7 +7,7 @@
     "backend": "PORT=5050 node backend/server.js",
     "frontend": "VITE_API_URL=http://localhost:5050/api vite frontend --host 0.0.0.0",
     "test": "vitest run",
-    "build": "vite build frontend --outDir dist",
+    "build": "vite build frontend --outDir frontend/dist",
     "preview": "vite preview frontend --host 0.0.0.0"
   },
   "dependencies": {

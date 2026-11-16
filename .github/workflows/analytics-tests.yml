@@ -1,0 +1,46 @@
+name: analytics-tests
+
+on:
+  push:
+    paths: ["analytics/**", "database/**", ".github/workflows/analytics-tests.yml"]
+  pull_request:
+    paths: ["analytics/**", "database/**", ".github/workflows/analytics-tests.yml"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: crypto_analytics
+          POSTGRES_USER: crypto
+          POSTGRES_PASSWORD: crypto
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U crypto -d crypto_analytics"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      DB_NAME: crypto_analytics
+      DB_USER: crypto
+      DB_PASSWORD: crypto
+      PGPASSWORD: crypto
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: analytics/requirements.txt
+      - run: pip install -r analytics/requirements.txt
+      - name: Create schema and views
+        run: |
+          for f in schema analytics_schema sample_data analytics_views; do
+            psql -h localhost -U crypto -d crypto_analytics -v ON_ERROR_STOP=1 -f database/$f.sql
+          done
+      - name: Load synthetic data (tests only - never real conclusions)
+        run: python -m analytics.etl.ingest --source synthetic --start 2023-01-01 --skip-sentiment
+      - name: Run tests
+        run: python -m pytest analytics/tests -q
